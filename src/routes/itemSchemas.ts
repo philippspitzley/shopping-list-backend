@@ -1,19 +1,32 @@
 import { z } from 'zod'
 
+const idParam = z.string().length(24, 'ID must be exactly 24 characters long.')
+const nameParam = z
+  .string()
+  .min(1, 'Item name is required')
+  .max(100, 'Name too long')
+const boughtParam = z.boolean()
+
 const idParamSchema = z.object({
-  id: z.string().length(24, 'ID must be exactly 24 characters long.'),
+  id: idParam,
 })
 
 const baseItemSchema = z.object({
-  name: z.string().min(1, 'Item name is required').max(100, 'Name too long'),
-  bought: z.boolean().default(false),
+  name: nameParam,
+  bought: boughtParam.default(false),
 })
 
 const createItemSchema = baseItemSchema.pick({
   name: true,
 })
 
-const updateItemSchema = baseItemSchema.partial()
+const updateItemSchema = z
+  .object({
+    name: nameParam,
+    bought: boughtParam,
+  })
+  .partial()
+  .strict()
 
 const itemResponseSchema = z.object({
   id: idParamSchema,
@@ -27,7 +40,6 @@ const itemResponseSchema = z.object({
 
 export const itemSchema = {
   id: idParamSchema,
-  base: baseItemSchema,
   create: createItemSchema,
   update: updateItemSchema,
   response: itemResponseSchema,
