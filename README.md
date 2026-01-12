@@ -25,7 +25,7 @@ RESTful API for managing shopping list items, built with Express.js, TypeScript,
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/philippspitzley/shopping-list-backend.git
+   git clone https://github.com/philippspitzley/shopping-list-backend.git &&
    cd shopping-list-backend
    ```
 
