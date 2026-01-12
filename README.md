@@ -130,7 +130,7 @@ Pre-commit hooks are automatically installed via `simple-git-hooks` when you run
 
 
 > [!TIP]  
-> Use `npm prepare` to reinstall all configured git-hooks. For example when you add or edit the configuration in `package.json` 
+> Use `npm run prepare` to reinstall all configured git-hooks. For example when you add or edit the configuration in `package.json` 
 
 
 ## 🏗️ Project Structure
