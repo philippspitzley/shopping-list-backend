@@ -129,6 +129,10 @@ Pre-commit hooks are automatically installed via `simple-git-hooks` when you run
 - Commit is blocked if there are unfixable errors
 
 
+> [!TIP]  
+> Use `npm prepare` to reinstall all configured git-hooks. For example when you add or edit the configuration in `package.json` 
+
+
 ## 🏗️ Project Structure
 
 ```
