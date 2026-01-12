@@ -69,7 +69,7 @@ export const errorHandler = (
     const details = [
       {
         path: ['body'],
-        field: 'body',
+        field: '',
         message: `Invalid input: expected json, received ${err.body}`,
       },
     ]

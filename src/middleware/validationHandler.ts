@@ -42,17 +42,15 @@ export const validateQuery = (schema: ZodType) => {
     const parsedQuery = schema.safeParse(req.query)
 
     if (!parsedQuery.success) {
-      return res.status(400).json({
-        error: {
-          name: 'Validation Error',
-          message: 'Invalid query parameters',
-          details: parsedQuery.error.issues.map((issue) => ({
-            path: issue.path,
-            field: issue.path.length ? issue.path.join('.') : 'query',
-            message: issue.message,
-          })),
-        },
-      })
+      const error = new ValidationError(
+        'Invalid query parameters',
+        parsedQuery.error.issues.map((issue) => ({
+          path: issue.path,
+          field: issue.path.length ? issue.path.join('.') : 'query',
+          message: issue.message,
+        })),
+      )
+      return res.status(400).json({ error })
     }
 
     req.query = parsedQuery.data as Request['query']
@@ -70,17 +68,15 @@ export const validateParams = (schema: ZodType) => {
     const result = schema.safeParse(req.params)
 
     if (!result.success) {
-      return res.status(400).json({
-        error: {
-          name: 'Validation Error',
-          message: 'Invalid URL parameters',
-          details: result.error.issues.map((issue) => ({
-            path: issue.path,
-            field: issue.path.length ? issue.path.join('.') : 'params',
-            message: issue.message,
-          })),
-        },
-      })
+      const error = new ValidationError(
+        'Invalid URL parameters',
+        result.error.issues.map((issue) => ({
+          path: issue.path,
+          field: issue.path.length ? issue.path.join('.') : 'params',
+          message: issue.message,
+        })),
+      )
+      return res.status(400).json({ error })
     }
 
     req.params = result.data as Request['params']
