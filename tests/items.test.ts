@@ -16,6 +16,7 @@ describe('Shopping List API', () => {
   describe('POST /api/items', () => {
     it('should return 200 with new item when new item with valid data is provided', async () => {
       const { response, newItem } = await createItem()
+      expect(response.status).toBe(201)
 
       expect(response.body.item).toHaveProperty('_id')
       expect(response.body.item.name).toBe(newItem.name)
@@ -40,6 +41,16 @@ describe('Shopping List API', () => {
 
       expect(response.body).toHaveProperty('error')
       expect(response.body.error.name).toBe('ValidationError')
+    })
+
+    it('should return 409 when created item name already exists', async () => {
+      const { response: firstResponse, newItem } = await createItem()
+      expect(firstResponse.status).toBe(201)
+
+      const { response } = await createItem(newItem)
+      expect(response.status).toBe(409)
+      expect(response.body).toHaveProperty('error')
+      expect(response.body.error.name).toBe('ConflictError')
     })
   })
 

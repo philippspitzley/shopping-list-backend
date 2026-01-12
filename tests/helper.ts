@@ -4,12 +4,12 @@ import request from 'supertest'
 import type { ItemCreate } from '../src/db/models.ts'
 import app from '../src/server.ts'
 
-export async function createItem() {
+export async function createItem(item?: ItemCreate) {
   const newItem: ItemCreate = { name: faker.commerce.product() }
 
   const response = await request(app)
     .post('/api/items')
-    .send(newItem)
+    .send(item || newItem)
     .expect('Content-Type', /json/)
 
   return { response, newItem }

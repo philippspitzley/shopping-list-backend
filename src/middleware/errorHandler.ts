@@ -46,6 +46,13 @@ export class NotFoundError extends CustomError {
   }
 }
 
+export class ConflictError extends CustomError {
+  constructor(message: string) {
+    super(message, 409)
+    this.name = 'ConflictError'
+  }
+}
+
 const isJsonParseError = (err: any): boolean => {
   return (
     err.name === 'SyntaxError' &&
