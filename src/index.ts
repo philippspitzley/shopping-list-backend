@@ -1,6 +1,12 @@
+import env, { isTest } from '../env.ts'
+import { dbConnection } from './db/connection.ts'
 import app from './server.ts'
-import env from '../env.ts'
 
-app.listen(env.PORT, () => {
-  console.log(`🚀 Server is running on http://localhost:${env.PORT}`)
+console.log('🚀 Starting Server...')
+if (!isTest()) {
+  await dbConnection()
+}
+
+app.listen(env.PORT, async () => {
+  console.log(`✅ Server is running on http://localhost:${env.PORT}`)
 })
