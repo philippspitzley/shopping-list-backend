@@ -19,7 +19,7 @@ export async function teardownTestDB() {
 
 export async function clearTestDB() {
   const collections = mongoose.connection.collections
-  console.log('CLEAR, COLLECTIONS:', collections)
+
   for (const key in collections) {
     await collections[key].deleteMany({})
   }
