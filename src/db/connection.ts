@@ -1,16 +1,23 @@
-import { drizzle } from 'drizzle-orm/postgres-js'
-import * as schema from './schema.ts'
-import { env, isProd } from '../../env.ts'
 import { remember } from '@epic-web/remember'
-import postgres from 'postgres'
+import mongose, { type Mongoose } from 'mongoose'
+import env, { isProd } from '../../env.ts'
 
-const createDb = () => {
-  const client = postgres(env.DATABASE_URL)
-  return drizzle(client, {
-    schema,
-  })
+export const connectDB = async () => {
+  console.log('🗄️  Connecting with database...')
+  const conn = await mongose.connect(env.DATABASE_URL)
+  console.log(
+    `🗄️  MongoDB connected with: ${conn.connection.host}:${conn.connection.port}`,
+  )
+  console.log(`🗄️  Database: ${conn.connection.name}`)
+
+  return conn
 }
 
-export const db = isProd() ? createDb() : remember('db', () => createDb())
+// prevents reconnecting to db after each hot reaload in development
+export async function dbConnection(): Promise<Mongoose> {
+  if (isProd()) {
+    return await connectDB()
+  }
 
-export default db
+  return await remember('db', () => connectDB())
+}
