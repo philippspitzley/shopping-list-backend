@@ -21,7 +21,7 @@
     "prepare": "simple-git-hooks"
   },
   "simple-git-hooks": {
-    "pre-commit": "npx nano-staged"
+    "pre-commit": "npx nano-staged && npm test"
   },
   "nano-staged": {
     "*.{js,ts,json}": [
