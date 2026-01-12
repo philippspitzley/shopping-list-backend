@@ -23,21 +23,21 @@ describe('Shopping List API', () => {
       const { response } = await createItemWithEmptyBody()
 
       expect(response.body).toHaveProperty('error')
-      expect(response.body.error).toBe('Validation Error')
+      expect(response.body.error.name).toBe('ValidationError')
     })
 
     it('should return 400 when invalid body properties is provided', async () => {
       const { response } = await createItemWithInvalidProperty()
 
       expect(response.body).toHaveProperty('error')
-      expect(response.body.error).toBe('Validation Error')
+      expect(response.body.error.name).toBe('ValidationError')
     })
 
     it('should return 400 when invalid body properties is provided', async () => {
       const { response } = await createItemWithInvalidBody()
 
       expect(response.body).toHaveProperty('error')
-      expect(response.body.error).toBe('Validation Error')
+      expect(response.body.error.name).toBe('ValidationError')
     })
   })
 
