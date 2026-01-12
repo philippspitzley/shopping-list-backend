@@ -1,4 +1,5 @@
 import { faker } from '@faker-js/faker'
+import type { Schema } from 'mongoose'
 import request from 'supertest'
 import type { ItemCreate } from '../src/db/models.ts'
 import app from '../src/server.ts'
@@ -82,6 +83,32 @@ export async function getItems() {
   const response = await request(app)
     .get('/api/items')
     .expect('Content-Type', /json/)
+
+  return { response }
+}
+
+export async function getItemByID(id: string | Schema.Types.ObjectId) {
+  const response = await request(app)
+    .get(`/api/items/${id}`)
+    .expect('Content-Type', /json/)
+
+  return { response }
+}
+
+export async function updateItem(
+  id: string | Schema.Types.ObjectId,
+  item: object | string,
+) {
+  const response = await request(app)
+    .patch(`/api/items/${id}`)
+    .send(item)
+    .expect('Content-Type', /json/)
+
+  return { response }
+}
+
+export async function deleteItemByID(id: string | Schema.Types.ObjectId) {
+  const response = await request(app).delete(`/api/items/${id}`)
 
   return { response }
 }
