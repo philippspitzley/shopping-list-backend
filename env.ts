@@ -1,52 +1,48 @@
 import dotenv from 'dotenv'
 import { z } from 'zod'
 
-process.env.APP_STAGE = process.env.APP_STAGE || 'dev'
-
-const isProduction = process.env.APP_STAGE === 'production'
-const isDevelopment = process.env.APP_STAGE === 'dev'
-const isTesting = process.env.APP_STAGE === 'test'
+const isDevelopment = process.env.NODE_ENV === 'development'
+const isTesting = process.env.NODE_ENV === 'test'
+const isProduction = process.env.NODE_ENV === 'production'
 
 if (isDevelopment) {
-  dotenv.config({ path: '.env' })
+  dotenv.config({ path: '.env', quiet: true })
+  console.log('✅ Development environments loaded')
 } else if (isTesting) {
-  dotenv.config({ path: '.env.test' })
+  console.log('✅ Test environments loaded')
+  dotenv.config({ path: '.env.test', quiet: true })
 }
 
 const envSchema = z.object({
   NODE_ENV: z
     .enum(['development', 'test', 'production'])
     .default('development'),
-  APP_STAGE: z.enum(['dev', 'test', 'production']).default('dev'),
-  PORT: z.coerce.number().positive().default(3000),
-  DATABASE_URL: z
-    .string()
-    .startsWith('postgresql://', 'Must be a valid Postgres URL'),
-  JWT_SECRET: z.string().min(32, 'Must be 32 chars long'),
-  JWT_EXPIRES_IN: z.string().default('7d'),
-  BCRYPT_ROUNDS: z.coerce.number().min(10).max(20).default(12),
+
+  PORT: z.coerce.number().positive().default(3000), // DATABASE_URL is not needed in test mode (MongoDB Memory Server provides it)
+
+  DATABASE_URL: isTesting
+    ? z.string().default('')
+    : z.string().startsWith('mongodb://', 'Must be a valid mongodb URL'),
+
   ALLOWED_ORIGINS: z.string().optional(),
 })
 
 export type Env = z.infer<typeof envSchema>
-let env: Env
 
-try {
-  env = envSchema.parse(process.env)
-} catch (e) {
-  if (e instanceof z.ZodError) {
-    console.log('🚨 Invalid env var')
-    console.error(z.prettifyError(e))
+const parsedEnv = envSchema.safeParse(process.env)
 
-    process.exit(1)
-  }
+if (!parsedEnv.success) {
+  console.log('🚨 Invalid env var')
+  console.error(z.prettifyError(parsedEnv.error))
 
-  throw e
+  process.exit(1)
 }
 
-export const isProd = () => env.APP_STAGE === 'production'
-export const isDev = () => env.APP_STAGE === 'dev'
-export const isTest = () => env.APP_STAGE === 'test'
+const env: Env = parsedEnv.data
+
+export const isProd = () => isProduction
+export const isDev = () => isDevelopment
+export const isTest = () => isTesting
 
 export { env }
 export default env
